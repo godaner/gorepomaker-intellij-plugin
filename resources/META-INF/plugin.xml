@@ -1,0 +1,37 @@
+<idea-plugin>
+  <id>com.godaner.gorepomaker_intellij_plugin</id>
+  <name>Go Repo Maker</name>
+  <version>1.1.1</version>
+  <vendor email="godanermail@gmail.com" url="https://github.com/godaner/gorepomaker-intellij-plugin">godaner
+  </vendor>
+
+  <description><![CDATA[
+      Plugin for generate struct repo from selected struct code.<br/>
+      How to use:<br/>
+      1. select the struct code<br/>
+      2. shortcut: Alt + R
+    ]]></description>
+
+  <change-notes>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="162"/>
+
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="Go.GoRepoMaker" class="com.godaner.gorepomaker_intellij_plugin.GoRepoMakerAction"
+            text="Go Repo Maker"
+            description="Go Repo Maker">
+      <add-to-group group-id="CodeMenu" anchor="after" relative-to-action="Generate"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="alt R"/>
+    </action>
+  </actions>
+
+</idea-plugin>

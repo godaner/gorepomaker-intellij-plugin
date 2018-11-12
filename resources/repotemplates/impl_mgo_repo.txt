@@ -1,0 +1,30 @@
+////////////////////////////////////////////////// ${entityRepoInterfaceName} //////////////////////////////////////////////////
+type ${entityRepoInterfaceName} interface {
+	//查询一条${entityName}记录
+	Query${entityName}One(query map[string]interface{}) (*SELFENTITY.${entityName},error)
+
+	//查询${entityName}指定字段
+	Query${entityName}Distinct(query map[string]interface{},field string,result interface{}) (error)
+
+	//查询所有${entityName}记录
+	Query${entityName}All(query map[string]interface{}) ([]*SELFENTITY.${entityName},error)
+
+	//查询${entityName}分页排序记录
+	Query${entityName}Page(query map[string]interface{}, limit int, sorts ...string) ([]*SELFENTITY.${entityName},error)
+
+	//查询${entityName}数量
+	Query${entityName}Count(query map[string]interface{}) (int64,error)
+
+	//更新${entityName}记录
+	Update${entityName}(selector , values map[string]interface{}) error
+
+	//删除${entityName}记录
+	Delete${entityName}(selector map[string]interface{}) error
+
+	//插入${entityName}记录
+	Insert${entityName}(entities ...*SELFENTITY.${entityName}) error
+
+	//关闭repo
+	Close() error
+
+}
