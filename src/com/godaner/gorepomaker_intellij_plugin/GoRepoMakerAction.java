@@ -60,7 +60,7 @@ public class GoRepoMakerAction extends AnAction {
         }.execute();
 
 
-        String[] options={"谢谢大哥"};
+        String[] options={"Thanks"};
         Messages.showDialog("生成Repo成功","成功",options,1,null);
     }
 

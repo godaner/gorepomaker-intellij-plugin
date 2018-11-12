@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.godaner.gorepomaker_intellij_plugin</id>
   <name>Go Repo Maker</name>
-  <version>1.1.1</version>
+  <version>1.0.0</version>
   <vendor email="godanermail@gmail.com" url="https://github.com/godaner/gorepomaker-intellij-plugin">godaner
   </vendor>
 

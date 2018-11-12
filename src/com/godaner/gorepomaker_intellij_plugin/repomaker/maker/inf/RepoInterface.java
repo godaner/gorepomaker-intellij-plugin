@@ -7,8 +7,7 @@ import com.godaner.gorepomaker_intellij_plugin.repomaker.Util;
 public class RepoInterface extends AbstractGoRepoMaker {
     @Override
     public String makeRepo(Entity entity) {
-        String filePath = this.getClass().getResource("/").getFile();
-        String filePathName=filePath+ "repotemplates/inf_repo.txt";
+        String filePathName = RepoInterface.class.getClassLoader().getResource("repotemplates/inf_repo.txt").getPath();
         return Util.makeTemplate2RepoStr(entity,filePathName);
     }
 
