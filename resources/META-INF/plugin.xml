@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.godaner.gorepomaker_intellij_plugin</id>
   <name>Go Repo Maker</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <vendor email="godanermail@gmail.com" url="https://github.com/godaner/gorepomaker-intellij-plugin">godaner
   </vendor>
 
@@ -12,7 +12,18 @@
       2. shortcut: Alt + R
     ]]></description>
 
-  <change-notes>
+  <change-notes><![CDATA[
+<html>
+  <b>v1.0.1</b> (11/13/2018)
+  <ul>
+    <li>Adjust repo function : QueryAll.</li>
+  </ul>
+  <b>v1.0</b> (unKnow)
+  <ul>
+    <li>Everything</li>
+  </ul>
+</html>
+    ]]>
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
