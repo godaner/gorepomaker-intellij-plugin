@@ -1,4 +1,4 @@
-package com.godaner.gorepomaker_intellij_plugin;
+package com.godaner.gorepomaker_intellij_plugin.action;
 
 import com.godaner.gorepomaker_intellij_plugin.repomaker.Entity;
 import com.godaner.gorepomaker_intellij_plugin.repomaker.GoRepoMaker;
@@ -31,6 +31,7 @@ public class GoRepoMakerAction extends AnAction {
 
         Editor editor = anActionEvent.getData(PlatformDataKeys.EDITOR);
         if (null == editor) {
+            Messages.showErrorDialog(project,"Make Repo Failed : Selected struct is empty !" , "Make Repo Failed");
             return;
         }
         this.selectedText = editor.getSelectionModel().getSelectedText();

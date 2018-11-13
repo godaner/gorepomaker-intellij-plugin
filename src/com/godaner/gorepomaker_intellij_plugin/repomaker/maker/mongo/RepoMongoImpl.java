@@ -16,7 +16,7 @@ public class RepoMongoImpl extends AbstractGoRepoMaker {
 
     @Override
     public int sortNum() {
-        return 0;
+        return 1;
     }
 
 }

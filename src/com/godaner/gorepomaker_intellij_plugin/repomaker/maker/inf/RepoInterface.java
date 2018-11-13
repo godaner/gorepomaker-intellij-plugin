@@ -13,7 +13,7 @@ public class RepoInterface extends AbstractGoRepoMaker {
 
     @Override
     public int sortNum() {
-        return 1;
+        return 0;
     }
 
 }
