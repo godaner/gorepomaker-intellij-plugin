@@ -16,7 +16,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +49,7 @@ public class GoRepoMakerAction extends AnAction {
             return;
         }
 
-        List<GoRepoMaker> goRepoMakers = Util.loadGoMakers();
+        List<GoRepoMaker> goRepoMakers = loadGoMakers();
 
         String repoStr= batchMakeRepo(entities,goRepoMakers);
 
@@ -67,7 +69,25 @@ public class GoRepoMakerAction extends AnAction {
         Messages.showDialog("生成Repo成功","成功",options,1,null);
     }
 
-
+    public List<GoRepoMaker> loadGoMakers()
+    {
+        List<GoRepoMaker> goRepoMakers = new ArrayList();
+        InputStream inputStream=RepoMongoImpl.class.getClassLoader().getResourceAsStream("maker_classes.txt");
+        try {
+            InputStreamReader read = new InputStreamReader(inputStream, "UTF-8");
+            BufferedReader reader = new BufferedReader(read);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                GoRepoMaker goRepoMaker= (GoRepoMaker) Class.forName(line).newInstance();
+                goRepoMakers.add(goRepoMaker);
+            }
+            read.close();
+        } catch (Exception e) {
+            System.out.println("读取文件内容操作出错");
+            e.printStackTrace();
+        }
+        return goRepoMakers;
+    }
     private String batchMakeRepo(List<Entity> entities,List<GoRepoMaker> goRepoMakers) {
         String repoStr="";
         Collections.sort(goRepoMakers);

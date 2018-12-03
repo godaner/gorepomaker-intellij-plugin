@@ -14,6 +14,10 @@
 
   <change-notes><![CDATA[
 <html>
+ <b>v1.0.2</b> (11/13/2018)
+  <ul>
+    <li>Add function : Delete${entityName}ByID , Get${entityName}ByID.</li>
+  </ul>
   <b>v1.0.1</b> (11/13/2018)
   <ul>
     <li>Adjust repo function : QueryAll.</li>
