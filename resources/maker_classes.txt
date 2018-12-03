@@ -1,0 +1,2 @@
+com.godaner.gorepomaker_intellij_plugin.repomaker.maker.inf.RepoInterface
+com.godaner.gorepomaker_intellij_plugin.repomaker.maker.mongo.RepoMongoImpl

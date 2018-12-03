@@ -3,9 +3,7 @@ package com.godaner.gorepomaker_intellij_plugin.repomaker.maker.mongo;
 
 import com.godaner.gorepomaker_intellij_plugin.repomaker.AbstractGoRepoMaker;
 import com.godaner.gorepomaker_intellij_plugin.repomaker.Entity;
-import com.godaner.gorepomaker_intellij_plugin.repomaker.Util;
-
-import java.io.File;
+import com.godaner.gorepomaker_intellij_plugin.util.Util;
 
 public class RepoMongoImpl extends AbstractGoRepoMaker {
     @Override

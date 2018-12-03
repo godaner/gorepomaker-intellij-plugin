@@ -2,6 +2,7 @@ package com.godaner.gorepomaker_intellij_plugin.action;
 
 import com.godaner.gorepomaker_intellij_plugin.repomaker.Entity;
 import com.godaner.gorepomaker_intellij_plugin.repomaker.GoRepoMaker;
+import com.godaner.gorepomaker_intellij_plugin.util.Util;
 import com.godaner.gorepomaker_intellij_plugin.repomaker.maker.inf.RepoInterface;
 import com.godaner.gorepomaker_intellij_plugin.repomaker.maker.mongo.RepoMongoImpl;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -15,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +47,7 @@ public class GoRepoMakerAction extends AnAction {
             return;
         }
 
-        List<GoRepoMaker> goRepoMakers = registRepoMakers();
+        List<GoRepoMaker> goRepoMakers = Util.loadGoMakers();
 
         String repoStr= batchMakeRepo(entities,goRepoMakers);
 
@@ -65,12 +67,6 @@ public class GoRepoMakerAction extends AnAction {
         Messages.showDialog("生成Repo成功","成功",options,1,null);
     }
 
-    private List<GoRepoMaker> registRepoMakers() {
-        List<GoRepoMaker> goRepoMakers = new ArrayList();
-        goRepoMakers.add(new RepoMongoImpl());
-        goRepoMakers.add(new RepoInterface());
-        return goRepoMakers;
-    }
 
     private String batchMakeRepo(List<Entity> entities,List<GoRepoMaker> goRepoMakers) {
         String repoStr="";

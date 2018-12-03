@@ -10,11 +10,20 @@ type ${entityMongoRepoName} struct {
 }
 
 
-
 //查询一条${entityName}记录
 func (this *${entityMongoRepoName})Query${entityName}One(query map[string]interface{}) (*SELFENTITY.${entityName},error) {
 	entity := SELFENTITY.${entityName}{}
 	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(query).One(&entity)
+	if err != nil {
+		return nil, err
+	}
+	return &entity, nil
+}
+
+//通过主键查询一条${entityName}记录
+func (this *${entityMongoRepoName})Get${entityName}ByID(id interface{}) (*SELFENTITY.${entityName},error) {
+	entity := SELFENTITY.${entityName}{}
+	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(map[string]interface{}{"_id":id}).One(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +94,16 @@ func (this *${entityMongoRepoName}) Update${entityName}(selector , values map[st
 //删除${entityName}记录
 func (this *${entityMongoRepoName}) Delete${entityName}(selector map[string]interface{}) error {
 	_, err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).RemoveAll(selector)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+//根据主键删除${entityName}记录
+func (this *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) error {
+	_, err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).RemoveAll(map[string]interface{}{"_id":id})
 	if err != nil {
 		return err
 	}

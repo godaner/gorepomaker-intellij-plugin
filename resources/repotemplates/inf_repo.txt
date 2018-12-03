@@ -4,6 +4,9 @@ type ${entityRepoInterfaceName} interface {
 	//查询一条${entityName}记录
 	Query${entityName}One(query map[string]interface{}) (*SELFENTITY.${entityName},error)
 
+    //通过主键查询一条${entityName}记录
+	Get${entityName}ByID(id interface{}) (*SELFENTITY.${entityName},error)
+
 	//查询${entityName}指定字段
 	Query${entityName}Distinct(query map[string]interface{},field string,result interface{}) (error)
 
@@ -21,6 +24,9 @@ type ${entityRepoInterfaceName} interface {
 
 	//删除${entityName}记录
 	Delete${entityName}(selector map[string]interface{}) error
+
+	//根据主键删除${entityName}记录
+	Delete${entityName}ByID(id interface{}) error
 
 	//插入${entityName}记录
 	Insert${entityName}(entities ...*SELFENTITY.${entityName}) error
