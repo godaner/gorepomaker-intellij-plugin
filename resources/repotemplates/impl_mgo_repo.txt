@@ -23,7 +23,7 @@ func (this *${entityMongoRepoName})Query${entityName}One(query map[string]interf
 //通过主键查询一条${entityName}记录
 func (this *${entityMongoRepoName})Get${entityName}ByID(id interface{}) (*SELFENTITY.${entityName},error) {
 	entity := SELFENTITY.${entityName}{}
-	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(map[string]interface{}{"_id":id}).One(&entity)
+	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).FindId(id).One(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +83,7 @@ func (this *${entityMongoRepoName})Query${entityName}Count(query map[string]inte
 
 //更新${entityName}记录
 func (this *${entityMongoRepoName}) Update${entityName}(selector , values map[string]interface{}) error {
+    delete(values,"_id")
 	_, err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).UpdateAll(selector, bson.M{"$set": values})
 	if err != nil {
 		return err
@@ -90,7 +91,16 @@ func (this *${entityMongoRepoName}) Update${entityName}(selector , values map[st
 	return nil
 
 }
+//根据主键更新$${entityName}记录
+func (this *${entityMongoRepoName}) Update${entityName}ByID(id interface{} , values map[string]interface{}) error {
+    delete(values,"_id")
+	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).UpdateId(id, bson.M{"$set": values})
+	if err != nil {
+		return err
+	}
+	return nil
 
+}
 //删除${entityName}记录
 func (this *${entityMongoRepoName}) Delete${entityName}(selector map[string]interface{}) error {
 	_, err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).RemoveAll(selector)
@@ -103,7 +113,7 @@ func (this *${entityMongoRepoName}) Delete${entityName}(selector map[string]inte
 
 //根据主键删除${entityName}记录
 func (this *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) error {
-	_, err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).RemoveAll(map[string]interface{}{"_id":id})
+	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).RemoveId(id)
 	if err != nil {
 		return err
 	}

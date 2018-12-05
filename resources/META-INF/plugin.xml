@@ -14,7 +14,11 @@
 
   <change-notes><![CDATA[
 <html>
- <b>v1.0.2</b> (11/13/2018)
+  <b>v1.0.3</b> (12/05/2018)
+  <ul>
+    <li>Add function : Update${entityName}ByID ; Adjust Update func, it can't update '_id'.</li>
+  </ul>
+  <b>v1.0.2</b> (12/2/2018)
   <ul>
     <li>Add function : Delete${entityName}ByID , Get${entityName}ByID.</li>
   </ul>

@@ -22,6 +22,9 @@ type ${entityRepoInterfaceName} interface {
 	//更新${entityName}记录
 	Update${entityName}(selector , values map[string]interface{}) error
 
+	//根据主键更新${entityName}记录
+	Update${entityName}ByID(id interface{} , values map[string]interface{}) error
+
 	//删除${entityName}记录
 	Delete${entityName}(selector map[string]interface{}) error
 
