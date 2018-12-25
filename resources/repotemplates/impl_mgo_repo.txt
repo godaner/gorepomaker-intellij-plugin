@@ -64,7 +64,10 @@ func (this *${entityMongoRepoName})Query${entityName}Page(query map[string]inter
 		}
 	}
 	entities := []*SELFENTITY.${entityName}{}
-	err:=q.Limit(limit).All(&entities)
+	if limit > 0 {
+	    q = q.Limit(limit)
+	}
+	err:=q.All(&entities)
     if err!=nil{
         return nil,err
     }
