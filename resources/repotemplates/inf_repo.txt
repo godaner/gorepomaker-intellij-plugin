@@ -1,29 +1,28 @@
-
 ////////////////////////////////////////////////// ${entityRepoInterfaceName} //////////////////////////////////////////////////
 type ${entityRepoInterfaceName} interface {
 	//查询一条${entityName}记录
-	Query${entityName}One(query map[string]interface{}) (*SELFENTITY.${entityName},error)
+	Query${entityName}One(query, selec map[string]interface{}) (*SELFENTITY.${entityName}, error)
 
 	//通过主键查询一条${entityName}记录
-	Get${entityName}ByID(id interface{}) (*SELFENTITY.${entityName},error)
+	Get${entityName}ByID(id interface{}, selec map[string]interface{}) (*SELFENTITY.${entityName}, error)
 
 	//查询${entityName}指定字段
-	Query${entityName}Distinct(query map[string]interface{},field string,result interface{}) (error)
+	Query${entityName}Distinct(query map[string]interface{}, field string, result interface{}) error
 
 	//查询所有${entityName}记录
-	Query${entityName}All(query map[string]interface{}, sorts map[string]interface{}) ([]*SELFENTITY.${entityName},error)
+	Query${entityName}All(query, selec map[string]interface{}, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error)
 
 	//查询${entityName}分页排序记录
-	Query${entityName}Page(query map[string]interface{}, limit int, sorts map[string]interface{}) ([]*SELFENTITY.${entityName},error)
+	Query${entityName}Page(query, selec map[string]interface{}, start int, limit int, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error)
 
 	//查询${entityName}数量
-	Query${entityName}Count(query map[string]interface{}) (int64,error)
+	Query${entityName}Count(query map[string]interface{}) (int64, error)
 
 	//更新${entityName}记录
-	Update${entityName}(selector , values map[string]interface{}) error
+	Update${entityName}(selector, values map[string]interface{}) error
 
 	//根据主键更新${entityName}记录
-	Update${entityName}ByID(id interface{} , values map[string]interface{}) error
+	Update${entityName}ByID(id interface{}, values map[string]interface{}) error
 
 	//删除${entityName}记录
 	Delete${entityName}(selector map[string]interface{}) error
@@ -36,5 +35,4 @@ type ${entityRepoInterfaceName} interface {
 
 	//关闭repo
 	Close() error
-
 }

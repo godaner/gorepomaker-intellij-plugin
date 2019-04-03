@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////// ${entityMongoRepoName} //////////////////////////////////////////////////
 
 //持久层mongo实现
@@ -7,9 +6,13 @@ type ${entityMongoRepoName} struct {
 }
 
 //查询一条${entityName}记录
-func (this *${entityMongoRepoName}) Query${entityName}One(query map[string]interface{}) (*SELFENTITY.${entityName}, error) {
+func (this *${entityMongoRepoName}) Query${entityName}One(query, selec map[string]interface{}) (*SELFENTITY.${entityName}, error) {
 	entity := SELFENTITY.${entityName}{}
-	err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), query).Decode(&entity)
+	ops := []*options.FindOneOptions{}
+	if selec != nil && len(selec) > 0 {
+		ops = append(ops, options.FindOne().SetProjection(selec))
+	}
+	err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), query, ops...).Decode(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -17,9 +20,13 @@ func (this *${entityMongoRepoName}) Query${entityName}One(query map[string]inter
 }
 
 //通过主键查询一条${entityName}记录
-func (this *${entityMongoRepoName}) Get${entityName}ByID(id interface{}) (*SELFENTITY.${entityName}, error) {
+func (this *${entityMongoRepoName}) Get${entityName}ByID(id interface{}, selec map[string]interface{}) (*SELFENTITY.${entityName}, error) {
 	entity := SELFENTITY.${entityName}{}
-	err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}).Decode(&entity)
+	ops := []*options.FindOneOptions{}
+	if selec != nil && len(selec) > 0 {
+		ops = append(ops, options.FindOne().SetProjection(selec))
+	}
+	err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, ops...).Decode(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -37,9 +44,16 @@ func (this *${entityMongoRepoName}) Query${entityName}Distinct(query map[string]
 }
 
 //查询所有${entityName}记录
-func (this *${entityMongoRepoName}) Query${entityName}All(query map[string]interface{}, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error) {
+func (this *${entityMongoRepoName}) Query${entityName}All(query, selec, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error) {
 	entities := []*SELFENTITY.${entityName}{}
-	cursor, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, options.Find().SetSort(sorts))
+	ops := []*options.FindOptions{}
+	if selec != nil && len(selec) > 0 {
+		ops = append(ops, options.Find().SetProjection(selec))
+	}
+	if sorts != nil && len(sorts) > 0 {
+		ops = append(ops, options.Find().SetSort(sorts))
+	}
+	cursor, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, ops...)
 	if err = cursor.Err(); err != nil {
 		return nil, err
 	}
@@ -55,10 +69,20 @@ func (this *${entityMongoRepoName}) Query${entityName}All(query map[string]inter
 }
 
 //查询${entityName}分页排序记录
-func (this *${entityMongoRepoName}) Query${entityName}Page(query map[string]interface{}, limit int, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error) {
+func (this *${entityMongoRepoName}) Query${entityName}Page(query, selec map[string]interface{}, start int, limit int, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error) {
 
 	entities := []*SELFENTITY.${entityName}{}
-	cursor, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, options.Find().SetLimit(int64(limit)), options.Find().SetSort(sorts))
+	ops := []*options.FindOptions{}
+	if selec != nil && len(selec) > 0 {
+		ops = append(ops, options.Find().SetProjection(selec))
+	}
+	if sorts != nil && len(sorts) > 0 {
+		ops = append(ops, options.Find().SetSort(sorts))
+	}
+	if limit >= 1 {
+		ops = append(ops, options.Find().SetLimit(int64(limit)))
+	}
+	cursor, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, ops...)
 	if err = cursor.Err(); err != nil {
 		return nil, err
 	}
