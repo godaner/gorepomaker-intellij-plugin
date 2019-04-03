@@ -14,6 +14,10 @@
 
   <change-notes><![CDATA[
 <html>
+  <b>v1.0.4.1</b> (04/03/2019)
+  <ul>
+    <li>Mongo impl become to mongo-go-driver , change sorts(string) to map[string]interface{}.</li>
+  </ul>
   <b>v1.0.4</b> (12/25/2018)
   <ul>
     <li>Adjust Query${entityName}Page # limit , if limit > 0 , it usable.</li>

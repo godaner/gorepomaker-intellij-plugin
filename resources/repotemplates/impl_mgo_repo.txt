@@ -1,19 +1,15 @@
+
 ////////////////////////////////////////////////// ${entityMongoRepoName} //////////////////////////////////////////////////
-//获取${entityMongoRepoName}对象
-func New${entityMongoRepoName}() REPO.${entityRepoInterfaceName} {
-	return &${entityMongoRepoName}{session: MONGO.GetSession()}
-}
 
 //持久层mongo实现
 type ${entityMongoRepoName} struct {
-	session *mgo.Session
+	MongoClient *mongo.Client `inject:"mongoclient"`
 }
 
-
 //查询一条${entityName}记录
-func (this *${entityMongoRepoName})Query${entityName}One(query map[string]interface{}) (*SELFENTITY.${entityName},error) {
+func (this *${entityMongoRepoName}) Query${entityName}One(query map[string]interface{}) (*SELFENTITY.${entityName}, error) {
 	entity := SELFENTITY.${entityName}{}
-	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(query).One(&entity)
+	err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), query).Decode(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -21,9 +17,9 @@ func (this *${entityMongoRepoName})Query${entityName}One(query map[string]interf
 }
 
 //通过主键查询一条${entityName}记录
-func (this *${entityMongoRepoName})Get${entityName}ByID(id interface{}) (*SELFENTITY.${entityName},error) {
+func (this *${entityMongoRepoName}) Get${entityName}ByID(id interface{}) (*SELFENTITY.${entityName}, error) {
 	entity := SELFENTITY.${entityName}{}
-	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).FindId(id).One(&entity)
+	err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}).Decode(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -31,8 +27,9 @@ func (this *${entityMongoRepoName})Get${entityName}ByID(id interface{}) (*SELFEN
 }
 
 //查询${entityName}指定字段
-func (this *${entityMongoRepoName})Query${entityName}Distinct(query map[string]interface{},field string,result interface{}) (error) {
-	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(query).Distinct(field,result)
+func (this *${entityMongoRepoName}) Query${entityName}Distinct(query map[string]interface{}, field string, result interface{}) error {
+	var err error
+	result, err = this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Distinct(TC.TimeoutCtx.GetMongoOperate(0), field, query)
 	if err != nil {
 		return err
 	}
@@ -40,73 +37,77 @@ func (this *${entityMongoRepoName})Query${entityName}Distinct(query map[string]i
 }
 
 //查询所有${entityName}记录
-func (this *${entityMongoRepoName})Query${entityName}All(query map[string]interface{}, sorts ...string) ([]*SELFENTITY.${entityName},error) {
-    q := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(query)
-    if sorts != nil && len(sorts) > 0 {
-        for _, s := range sorts {
-            q.Sort(s)
-        }
-    }
+func (this *${entityMongoRepoName}) Query${entityName}All(query map[string]interface{}, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error) {
 	entities := []*SELFENTITY.${entityName}{}
-    err:=q.All(&entities)
-    if err!=nil{
-        return nil,err
-    }
+	cursor, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, options.Find().SetSort(sorts))
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+	defer cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
+	for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
+		entity := SELFENTITY.${entityName}{}
+		if err = cursor.Decode(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, &entity)
+	}
 	return entities, nil
 }
 
 //查询${entityName}分页排序记录
-func (this *${entityMongoRepoName})Query${entityName}Page(query map[string]interface{}, limit int, sorts ...string) ([]*SELFENTITY.${entityName},error) {
-	q := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(query)
-	if sorts != nil && len(sorts) > 0 {
-		for _, s := range sorts {
-			q.Sort(s)
-		}
-	}
+func (this *${entityMongoRepoName}) Query${entityName}Page(query map[string]interface{}, limit int, sorts map[string]interface{}) ([]*SELFENTITY.${entityName}, error) {
+
 	entities := []*SELFENTITY.${entityName}{}
-	if limit > 0 {
-	    q = q.Limit(limit)
+	cursor, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, options.Find().SetLimit(int64(limit)), options.Find().SetSort(sorts))
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
-	err:=q.All(&entities)
-    if err!=nil{
-        return nil,err
-    }
+	defer cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
+	for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
+		entity := SELFENTITY.${entityName}{}
+		if err = cursor.Decode(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, &entity)
+	}
 	return entities, nil
 
 }
 
 //查询${entityName}数量
-func (this *${entityMongoRepoName})Query${entityName}Count(query map[string]interface{}) (int64,error) {
-	count,err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Find(query).Count()
+func (this *${entityMongoRepoName}) Query${entityName}Count(query map[string]interface{}) (int64, error) {
+	count, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).CountDocuments(TC.TimeoutCtx.GetMongoOperate(0), query)
 	if err != nil {
-		return -1,err
+		return -1, err
 	}
 	return int64(count), nil
 }
 
 //更新${entityName}记录
-func (this *${entityMongoRepoName}) Update${entityName}(selector , values map[string]interface{}) error {
-    delete(values,"_id")
-	_, err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).UpdateAll(selector, bson.M{"$set": values})
+func (this *${entityMongoRepoName}) Update${entityName}(selector, values map[string]interface{}) error {
+	delete(values, "_id")
+	_, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).UpdateMany(TC.TimeoutCtx.GetMongoOperate(0), selector, values)
 	if err != nil {
 		return err
 	}
 	return nil
 
 }
+
 //根据主键更新$${entityName}记录
-func (this *${entityMongoRepoName}) Update${entityName}ByID(id interface{} , values map[string]interface{}) error {
-    delete(values,"_id")
-	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).UpdateId(id, bson.M{"$set": values})
+func (this *${entityMongoRepoName}) Update${entityName}ByID(id interface{}, values map[string]interface{}) error {
+	delete(values, "_id")
+	_, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).UpdateOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, values)
 	if err != nil {
 		return err
 	}
 	return nil
 
 }
+
 //删除${entityName}记录
 func (this *${entityMongoRepoName}) Delete${entityName}(selector map[string]interface{}) error {
-	_, err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).RemoveAll(selector)
+	_, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).DeleteMany(TC.TimeoutCtx.GetMongoOperate(0), selector)
 	if err != nil {
 		return err
 	}
@@ -116,7 +117,7 @@ func (this *${entityMongoRepoName}) Delete${entityName}(selector map[string]inte
 
 //根据主键删除${entityName}记录
 func (this *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) error {
-	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).RemoveId(id)
+	_, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).DeleteOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id})
 	if err != nil {
 		return err
 	}
@@ -126,20 +127,18 @@ func (this *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) erro
 
 //插入${entityName}记录
 func (this *${entityMongoRepoName}) Insert${entityName}(entities ...*SELFENTITY.${entityName}) error {
-	entitiesInterface:= []interface{}{}
-	for _,entity:=range entities{
-		entitiesInterface=append(entitiesInterface,entity)
+	entitiesInterface := []interface{}{}
+	for _, entity := range entities {
+		entitiesInterface = append(entitiesInterface, entity)
 	}
-	err := this.session.DB(CONFIG.MgoDBName).C(SELFENTITY.${entityCollectionName}).Insert(entitiesInterface...)
+	_, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).InsertMany(TC.TimeoutCtx.GetMongoOperate(0), entitiesInterface)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-
 //关闭repo
 func (this *${entityMongoRepoName}) Close() error {
-	this.session.Close()
 	return nil
 }
