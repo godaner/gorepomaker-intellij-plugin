@@ -34,13 +34,12 @@ func (this *${entityMongoRepoName}) Get${entityName}ByID(id interface{}, selec m
 }
 
 //查询${entityName}指定字段
-func (this *${entityMongoRepoName}) Query${entityName}Distinct(query map[string]interface{}, field string, result interface{}) error {
-	var err error
-	result, err = this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Distinct(TC.TimeoutCtx.GetMongoOperate(0), field, query)
+func (this *${entityMongoRepoName}) Query${entityName}Distinct(query map[string]interface{}, field string) ([]interface{},error) {
+	result, err := this.MongoClient.Database(CONFIG.MgoDBName).Collection(SELFENTITY.${entityName}Col).Distinct(TC.TimeoutCtx.GetMongoOperate(0), field, query)
 	if err != nil {
-		return err
+		return nil,err
 	}
-	return nil
+	return result,nil
 }
 
 //查询所有${entityName}记录
