@@ -62,7 +62,7 @@ func (this *${entityMongoRepoName}) Query${entityName}Distinct(query interface{}
 
 
 //查询${entityName}记录
-func (this *${entityMongoRepoName}) Query${entityName}Page(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error) {
+func (this *${entityMongoRepoName}) Query${entityName}(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error) {
 	opts := &DB.DBOperationOptions{}
 	for _, o := range options {
 		o(opts)

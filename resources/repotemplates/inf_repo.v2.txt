@@ -17,7 +17,7 @@ type ${entityRepoInterfaceName} interface {
 	Query${entityName}Distinct(query interface{}, field string) ([]interface{}, error)
 
 	//查询${entityName}记录
-	Query${entityName}Page(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
+	Query${entityName}(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
 
 	//查询${entityName}数量
 	Query${entityName}Count(query interface{}) (int64, error)
