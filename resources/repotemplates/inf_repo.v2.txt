@@ -16,10 +16,7 @@ type ${entityRepoInterfaceName} interface {
 	//查询${entityName}指定字段
 	Query${entityName}Distinct(query interface{}, field string) ([]interface{}, error)
 
-	//查询所有${entityName}记录
-	Query${entityName}All(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
-
-	//查询${entityName}分页排序记录
+	//查询${entityName}记录
 	Query${entityName}Page(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
 
 	//查询${entityName}数量

@@ -60,36 +60,8 @@ func (this *${entityMongoRepoName}) Query${entityName}Distinct(query interface{}
 	return result, nil
 }
 
-//查询所有${entityName}记录
-func (this *${entityMongoRepoName}) Query${entityName}All(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error) {
-	opts := &DB.DBOperationOptions{}
-	for _, o := range options {
-		o(opts)
-	}
-	entities := []*SELFENTITY.${entityName}{}
-	ops := []*mgooptions.FindOptions{}
-	if opts.Select != nil {
-		ops = append(ops, mgooptions.Find().SetProjection(opts.Select))
-	}
-	if opts.Sorts != nil {
-		ops = append(ops, mgooptions.Find().SetSort(opts.Select))
-	}
-	cursor, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, ops...)
-	if err = cursor.Err(); err != nil {
-		return nil, err
-	}
-	defer cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
-	for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
-		entity := SELFENTITY.${entityName}{}
-		if err = cursor.Decode(&entity); err != nil {
-			return nil, err
-		}
-		entities = append(entities, &entity)
-	}
-	return entities, nil
-}
 
-//查询${entityName}分页排序记录
+//查询${entityName}记录
 func (this *${entityMongoRepoName}) Query${entityName}Page(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error) {
 	opts := &DB.DBOperationOptions{}
 	for _, o := range options {
