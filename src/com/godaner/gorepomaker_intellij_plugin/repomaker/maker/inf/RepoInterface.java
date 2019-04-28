@@ -8,7 +8,7 @@ import com.godaner.gorepomaker_intellij_plugin.repomaker.maker.mongo.RepoMongoIm
 public class RepoInterface extends AbstractGoRepoMaker {
     @Override
     public String makeRepo(Entity entity) {
-        return Util.makeTemplate2RepoStr(entity,RepoMongoImpl.class.getClassLoader().getResourceAsStream("repotemplates/inf_repo.txt"));
+        return Util.makeTemplate2RepoStr(entity,RepoMongoImpl.class.getClassLoader().getResourceAsStream("repotemplates/inf_repo.v2.txt"));
     }
 
     @Override

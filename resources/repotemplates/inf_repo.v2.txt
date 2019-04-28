@@ -1,0 +1,45 @@
+package inf
+
+import (
+	DB "han-networks.com/common/db"
+	SELFENTITY "han-networks.com/switch/swconfig/entity"
+)
+
+////////////////////////////////////////////////// ${entityRepoInterfaceName} //////////////////////////////////////////////////
+type ${entityRepoInterfaceName} interface {
+	//查询一条${entityName}记录
+	Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error)
+
+	//通过主键查询一条${entityName}记录
+	Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error)
+
+	//查询${entityName}指定字段
+	Query${entityName}Distinct(query interface{}, field string) ([]interface{}, error)
+
+	//查询所有${entityName}记录
+	Query${entityName}All(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
+
+	//查询${entityName}分页排序记录
+	Query${entityName}Page(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
+
+	//查询${entityName}数量
+	Query${entityName}Count(query interface{}) (int64, error)
+
+	//更新${entityName}记录
+	Update${entityName}(selector, values interface{}) error
+
+	//根据主键更新${entityName}记录
+	Update${entityName}ByID(id interface{}, values interface{}) error
+
+	//删除${entityName}记录
+	Delete${entityName}(selector interface{}) error
+
+	//根据主键删除${entityName}记录
+	Delete${entityName}ByID(id interface{}) error
+
+	//插入${entityName}记录
+	Insert${entityName}(entities ...*SELFENTITY.${entityName}) error
+
+	//关闭repo
+	Close() error
+}
