@@ -85,9 +85,7 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
 	defer cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
 	for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
 		entity := SELFENTITY.${entityName}{}
-		if err = cursor.Decode(&entity); err != nil {
-			return nil, err
-		}
+		cursor.Decode(&entity)
 		entities = append(entities, &entity)
 	}
 	return entities, nil
