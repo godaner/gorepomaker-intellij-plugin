@@ -1,0 +1,178 @@
+package mongo
+
+import (
+	mgooptions "go.mongodb.org/mongo-driver/mongo/options"
+	DB "han-networks.com/common/db"
+	TC "han-networks.com/common/timeoutctx"
+	SELFENTITY "han-networks.com/xxxx/entity"
+)
+
+////////////////////////////////////////////////// ${entityMongoRepoName} //////////////////////////////////////////////////
+
+//持久层mongo实现
+type ${entityMongoRepoName} struct {
+	MongoClient *DB.MongoClient `inject:"mongoclient"`
+	MongoDBName string          `inject:"mongodbname"`
+}
+
+//查询一条${entityName}记录
+func (this *${entityMongoRepoName}) Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entity := SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOneOptions{}
+	if opts.Select != nil {
+		ops = append(ops, mgooptions.FindOne().SetProjection(opts.Select))
+	}
+	err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), query, ops...).Decode(&entity)
+	if err != nil {
+		return nil, err
+	}
+	return &entity, nil
+}
+
+//通过主键查询一条${entityName}记录
+func (this *${entityMongoRepoName}) Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entity := SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOneOptions{}
+	if opts.Select != nil {
+		ops = append(ops, mgooptions.FindOne().SetProjection(opts.Select))
+	}
+	err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, ops...).Decode(&entity)
+	if err != nil {
+		return nil, err
+	}
+	return &entity, nil
+}
+
+//查询${entityName}指定字段
+func (this *${entityMongoRepoName}) Query${entityName}Distinct(query interface{}, field string) ([]interface{}, error) {
+	result, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).Distinct(TC.TimeoutCtx.GetMongoOperate(0), field, query)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+//查询${entityName}记录
+func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entities := []*SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOptions{}
+	if opts.Select != nil {
+		ops = append(ops, mgooptions.Find().SetProjection(opts.Select))
+	}
+	if opts.Sorts != nil {
+		ops = append(ops, mgooptions.Find().SetSort(opts.Sorts))
+	}
+	if opts.Limit >= 1 {
+		ops = append(ops, mgooptions.Find().SetLimit(int64(opts.Limit)))
+	}
+	cursor, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, ops...)
+	if err != nil {
+		return nil, err
+	}
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+	defer cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
+	for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
+		entity := SELFENTITY.${entityName}{}
+		cursor.Decode(&entity)
+		entities = append(entities, &entity)
+	}
+	return entities, nil
+
+}
+
+//查询${entityName}数量
+func (this *${entityMongoRepoName}) Query${entityName}Count(query interface{}) (int64, error) {
+	count, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).CountDocuments(TC.TimeoutCtx.GetMongoOperate(0), query)
+	if err != nil {
+		return -1, err
+	}
+	return int64(count), nil
+}
+
+//更新${entityName}记录
+func (this *${entityMongoRepoName}) Update${entityName}(selector, values interface{}) (*DB.UpdateResult, error) {
+	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).UpdateMany(TC.TimeoutCtx.GetMongoOperate(0), selector, values)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.UpdateResult{
+		MatchedCount:  res.MatchedCount,
+		ModifiedCount: res.ModifiedCount,
+		UpsertedCount: res.UpsertedCount,
+		UpsertedID:    res.UpsertedID,
+	}, nil
+
+}
+
+//根据主键更新$${entityName}记录
+func (this *${entityMongoRepoName}) Update${entityName}ByID(id interface{}, values interface{}) (*DB.UpdateResult, error) {
+	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).UpdateOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, values)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.UpdateResult{
+		MatchedCount:  res.MatchedCount,
+		ModifiedCount: res.ModifiedCount,
+		UpsertedCount: res.UpsertedCount,
+		UpsertedID:    res.UpsertedID,
+	}, nil
+
+}
+
+//删除${entityName}记录
+func (this *${entityMongoRepoName}) Delete${entityName}(selector interface{}) (*DB.DeleteResult, error) {
+	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteMany(TC.TimeoutCtx.GetMongoOperate(0), selector)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.DeleteResult{
+		DeletedCount: res.DeletedCount,
+	}, nil
+
+}
+
+//根据主键删除${entityName}记录
+func (this *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) (*DB.DeleteResult, error) {
+	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id})
+	if err != nil {
+		return nil, err
+	}
+	return &DB.DeleteResult{
+		DeletedCount: res.DeletedCount,
+	}, nil
+
+}
+
+//插入${entityName}记录
+func (this *${entityMongoRepoName}) Insert${entityName}(entities ...*SELFENTITY.${entityName}) (*DB.InsertManyResult, error) {
+	entitiesInterface := []interface{}{}
+	for _, entity := range entities {
+		entitiesInterface = append(entitiesInterface, entity)
+	}
+	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).InsertMany(TC.TimeoutCtx.GetMongoOperate(0), entitiesInterface)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.InsertManyResult{
+		InsertedIDs: res.InsertedIDs,
+	}, nil
+}
+
+//关闭repo
+func (this *${entityMongoRepoName}) Close() error {
+	return nil
+}

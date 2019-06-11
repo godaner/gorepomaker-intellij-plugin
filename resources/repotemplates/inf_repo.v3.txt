@@ -1,0 +1,42 @@
+package inf
+
+import (
+	DB "han-networks.com/common/db"
+	SELFENTITY "han-networks.com/switch/swservice/entity"
+)
+
+////////////////////////////////////////////////// ${entityMongoRepoName} //////////////////////////////////////////////////
+type ${entityMongoRepoName} interface {
+	//查询一条${entityName}记录
+	Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error)
+
+	//通过主键查询一条${entityName}记录
+	Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error)
+
+	//查询${entityName}指定字段
+	Query${entityName}Distinct(query interface{}, field string) ([]interface{}, error)
+
+	//查询${entityName}记录
+	Query${entityName}Many(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
+
+	//查询${entityName}数量
+	Query${entityName}Count(query interface{}) (int64, error)
+
+	//更新${entityName}记录
+	Update${entityName}(selector, values interface{}) (*DB.UpdateResult, error)
+
+	//根据主键更新${entityName}记录
+	Update${entityName}ByID(id interface{}, values interface{}) (*DB.UpdateResult, error)
+
+	//删除${entityName}记录
+	Delete${entityName}(selector interface{}) (*DB.DeleteResult, error)
+
+	//根据主键删除${entityName}记录
+	Delete${entityName}ByID(id interface{}) (*DB.DeleteResult, error)
+
+	//插入${entityName}记录
+	Insert${entityName}(entities ...*SELFENTITY.${entityName}) (*DB.InsertManyResult, error)
+
+	//关闭repo
+	Close() error
+}
