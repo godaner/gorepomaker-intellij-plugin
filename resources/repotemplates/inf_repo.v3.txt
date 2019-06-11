@@ -5,8 +5,8 @@ import (
 	SELFENTITY "han-networks.com/switch/swservice/entity"
 )
 
-////////////////////////////////////////////////// ${entityMongoRepoName} //////////////////////////////////////////////////
-type ${entityMongoRepoName} interface {
+////////////////////////////////////////////////// ${entityRepoInterfaceName} //////////////////////////////////////////////////
+type ${entityRepoInterfaceName} interface {
 	//查询一条${entityName}记录
 	Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error)
 
