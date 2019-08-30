@@ -5,6 +5,7 @@ import (
 	DB "han-networks.com/common/db"
 	TC "han-networks.com/common/timeoutctx"
 	SELFENTITY "han-networks.com/xxxx/entity"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
 ////////////////////////////////////////////////// ${entityMongoRepoName} //////////////////////////////////////////////////
@@ -75,18 +76,19 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
 		ops = append(ops, mgooptions.Find().SetSort(opts.Sorts))
 	}
     if opts.Sortss != nil {
+        ss:=bsonx.Doc{}
         for _,s:=range opts.Sortss{
-            ps:=strings.Split(s,"+")
-            if len(ps)>=2{
-                ops = append(ops, mgooptions.Find().SetSort(map[string]interface{}{ps[1]:1}))
-                continue
+            n := int32(1)
+            switch s[0] {
+            case '+':
+                s = s[1:]
+            case '-':
+                n = int32(-1)
+                s = s[1:]
             }
-            ds:=strings.Split(s,"-")
-            if len(ds)>=2{
-                ops = append(ops, mgooptions.Find().SetSort(map[string]interface{}{ds[1]:-1}))
-                continue
-            }
+            ss=append(ss,bsonx.Elem{s, bsonx.Int32(n)})
         }
+        ops=append(ops,mgooptions.Find().SetSort(ss))
     }
 	if opts.Limit >= 1 {
 		ops = append(ops, mgooptions.Find().SetLimit(int64(opts.Limit)))
