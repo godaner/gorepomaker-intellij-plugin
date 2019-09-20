@@ -86,12 +86,12 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
                 n = int32(-1)
                 s = s[1:]
             }
-            ss=append(ss,bsonx.Elem{s, bsonx.Int32(n)})
+            ss=append(ss,bsonx.Elem{Key:s, Value:bsonx.Int32(n)})
         }
         ops=append(ops,mgooptions.Find().SetSort(ss))
     }
 	if opts.Limit >= 1 {
-		ops = append(ops, mgooptions.Find().SetLimit(int64(opts.Limit)))
+		ops = append(ops, mgooptions.Find().SetLimit(opts.Limit))
 	}
 	cursor, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, ops...)
 	if err != nil {
@@ -116,7 +116,7 @@ func (this *${entityMongoRepoName}) Query${entityName}Count(query interface{}) (
 	if err != nil {
 		return -1, err
 	}
-	return int64(count), nil
+	return count, nil
 }
 
 //更新${entityName}记录
