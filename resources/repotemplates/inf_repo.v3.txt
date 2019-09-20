@@ -8,35 +8,35 @@ import (
 ////////////////////////////////////////////////// ${entityRepoInterfaceName} //////////////////////////////////////////////////
 type ${entityRepoInterfaceName} interface {
 	//查询一条${entityName}记录
-	Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error)
+	Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error)
 
 	//通过主键查询一条${entityName}记录
-	Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (*SELFENTITY.${entityName}, error)
+	Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error)
 
 	//查询${entityName}指定字段
-	Query${entityName}Distinct(query interface{}, field string) ([]interface{}, error)
+	Query${entityName}Distinct(query interface{}, field string) (fields []interface{},err error)
 
 	//查询${entityName}记录
-	Query${entityName}Many(query interface{}, options ...DB.DBOperationOption) ([]*SELFENTITY.${entityName}, error)
+	Query${entityName}Many(query interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error)
 
 	//查询${entityName}数量
-	Query${entityName}Count(query interface{}) (int64, error)
+	Query${entityName}Count(query interface{}) (count int64,err error)
 
 	//更新${entityName}记录
-	Update${entityName}(selector, values interface{}) (*DB.UpdateResult, error)
+	Update${entityName}(selector, values interface{}) (updateResult *DB.UpdateResult,err error)
 
 	//根据主键更新${entityName}记录
-	Update${entityName}ByID(id interface{}, values interface{}) (*DB.UpdateResult, error)
+	Update${entityName}ByID(id interface{}, values interface{}) (updateResult *DB.UpdateResult,err error)
 
 	//删除${entityName}记录
-	Delete${entityName}(selector interface{}) (*DB.DeleteResult, error)
+	Delete${entityName}(selector interface{}) (deleteResult *DB.DeleteResult,err error)
 
 	//根据主键删除${entityName}记录
-	Delete${entityName}ByID(id interface{}) (*DB.DeleteResult, error)
+	Delete${entityName}ByID(id interface{}) (deleteResult *DB.DeleteResult,err error)
 
 	//插入${entityName}记录
-	Insert${entityName}(entities ...*SELFENTITY.${entityName}) (*DB.InsertManyResult, error)
+	Insert${entityName}(entities ...*SELFENTITY.${entityName}) (insertManyResult *DB.InsertManyResult,err error)
 
 	//关闭repo
-	Close() error
+	Close() (err error)
 }
