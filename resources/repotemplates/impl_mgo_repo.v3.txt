@@ -79,8 +79,8 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
 	}
     if opts.Sortss != nil {
         ss:=bsonx.Doc{}
-        for _,s:=range opts.Sortss{
-            n := int32(1)
+        n := int32(1)
+        if len(s)>=1{
             switch s[0] {
             case '+':
                 s = s[1:]
@@ -88,9 +88,8 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
                 n = int32(-1)
                 s = s[1:]
             }
-            ss=append(ss,bsonx.Elem{Key:s, Value:bsonx.Int32(n)})
         }
-        ops=append(ops,mgooptions.Find().SetSort(ss))
+        ss=append(ss,bsonx.Elem{Key:s, Value:bsonx.Int32(n)})
     }
 	if opts.Limit >= 1 {
 		ops = append(ops, mgooptions.Find().SetLimit(opts.Limit))
