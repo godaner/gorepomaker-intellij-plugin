@@ -104,7 +104,8 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
 	if err != nil {
 		return nil, err
 	}
-	if err = cursor.Err(); err != nil {
+	err = cursor.Err()
+	if err != nil {
 		return nil, err
 	}
 	defer func(){
