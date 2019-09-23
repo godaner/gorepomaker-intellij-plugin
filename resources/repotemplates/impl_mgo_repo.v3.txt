@@ -104,7 +104,7 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
 	if err != nil {
 		return nil, err
 	}
-	if err = cursor.Err(); err != nil {
+	if err := cursor.Err(); err != nil {
 		return nil, err
 	}
 	defer func(){
@@ -149,7 +149,7 @@ func (this *${entityMongoRepoName}) Update${entityName}(selector, values interfa
 }
 
 //根据主键更新$${entityName}记录
-func (this *${entityMongoRepoName}) Update${entityName}ByID(id interface{}, values interface{}) (updateResult *DB.UpdateResult,err error) {
+func (this *${entityMongoRepoName}) Update${entityName}ByID(id , values interface{}) (updateResult *DB.UpdateResult,err error) {
 	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).UpdateOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, values)
 	if err != nil {
 		return nil, err
