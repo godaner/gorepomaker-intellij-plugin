@@ -5,38 +5,38 @@ import (
 	SELFENTITY "han-networks.com/switch/swservice/entity"
 )
 
-////////////////////////////////////////////////// ${entityRepoInterfaceName} //////////////////////////////////////////////////
+// ${entityRepoInterfaceName}
 type ${entityRepoInterfaceName} interface {
-	//查询一条${entityName}记录
+	// 查询一条${entityName}记录
 	Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error)
 
-	//通过主键查询一条${entityName}记录
+	// 通过主键查询一条${entityName}记录
 	Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error)
 
-	//查询${entityName}指定字段
+	// 查询${entityName}指定字段
 	Query${entityName}Distinct(query interface{}, field string) (fields []interface{},err error)
 
-	//查询${entityName}记录
+	// 查询${entityName}记录
 	Query${entityName}Many(query interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error)
 
-	//查询${entityName}数量
+	// 查询${entityName}数量
 	Query${entityName}Count(query interface{}) (count int64,err error)
 
-	//更新${entityName}记录
+	// 更新${entityName}记录
 	Update${entityName}(selector, values interface{}) (updateResult *DB.UpdateResult,err error)
 
-	//根据主键更新${entityName}记录
+	// 根据主键更新${entityName}记录
 	Update${entityName}ByID(id interface{}, values interface{}) (updateResult *DB.UpdateResult,err error)
 
-	//删除${entityName}记录
+	// 删除${entityName}记录
 	Delete${entityName}(selector interface{}) (deleteResult *DB.DeleteResult,err error)
 
-	//根据主键删除${entityName}记录
+	// 根据主键删除${entityName}记录
 	Delete${entityName}ByID(id interface{}) (deleteResult *DB.DeleteResult,err error)
 
-	//插入${entityName}记录
+	// 插入${entityName}记录
 	Insert${entityName}(entities ...*SELFENTITY.${entityName}) (insertManyResult *DB.InsertManyResult,err error)
 
-	//关闭repo
+	// 关闭repo
 	Close() (err error)
 }

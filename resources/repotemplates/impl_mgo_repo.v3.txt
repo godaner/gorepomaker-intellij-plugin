@@ -9,16 +9,16 @@ import (
 	"han-networks.com/common/hanlog"
 )
 
-////////////////////////////////////////////////// ${entityMongoRepoName} //////////////////////////////////////////////////
+// ${entityMongoRepoName}
 
-//持久层mongo实现
+// 持久层mongo实现
 type ${entityMongoRepoName} struct {
 	MongoClient *DB.MongoClient `inject:"mongoclient"`
 	MongoDBName string          `inject:"mongodbname"`
 	Logger hanlog.Hanlog          `inject:"logger"`
 }
 
-//查询一条${entityName}记录
+// 查询一条${entityName}记录
 func (this *${entityMongoRepoName}) Query${entityName}One(query interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error) {
 	opts := &DB.DBOperationOptions{}
 	for _, o := range options {
@@ -36,7 +36,7 @@ func (this *${entityMongoRepoName}) Query${entityName}One(query interface{}, opt
 	return entity, nil
 }
 
-//通过主键查询一条${entityName}记录
+// 通过主键查询一条${entityName}记录
 func (this *${entityMongoRepoName}) Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error) {
 	opts := &DB.DBOperationOptions{}
 	for _, o := range options {
@@ -54,7 +54,7 @@ func (this *${entityMongoRepoName}) Get${entityName}ByID(id interface{}, options
 	return entity, nil
 }
 
-//查询${entityName}指定字段
+// 查询${entityName}指定字段
 func (this *${entityMongoRepoName}) Query${entityName}Distinct(query interface{}, field string) (fields []interface{},err error) {
 	result, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).Distinct(TC.TimeoutCtx.GetMongoOperate(0), field, query)
 	if err != nil {
@@ -63,7 +63,7 @@ func (this *${entityMongoRepoName}) Query${entityName}Distinct(query interface{}
 	return result, nil
 }
 
-//查询${entityName}记录
+// 查询${entityName}记录
 func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error) {
 	opts := &DB.DBOperationOptions{}
 	for _, o := range options {
@@ -125,7 +125,7 @@ func (this *${entityMongoRepoName}) Query${entityName}Many(query interface{}, op
 
 }
 
-//查询${entityName}数量
+// 查询${entityName}数量
 func (this *${entityMongoRepoName}) Query${entityName}Count(query interface{}) (count int64,err error) {
 	count, err = this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).CountDocuments(TC.TimeoutCtx.GetMongoOperate(0), query)
 	if err != nil {
@@ -134,7 +134,7 @@ func (this *${entityMongoRepoName}) Query${entityName}Count(query interface{}) (
 	return count, nil
 }
 
-//更新${entityName}记录
+// 更新${entityName}记录
 func (this *${entityMongoRepoName}) Update${entityName}(selector, values interface{}) (updateResult *DB.UpdateResult,err error) {
 	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).UpdateMany(TC.TimeoutCtx.GetMongoOperate(0), selector, values)
 	if err != nil {
@@ -149,7 +149,7 @@ func (this *${entityMongoRepoName}) Update${entityName}(selector, values interfa
 
 }
 
-//根据主键更新$${entityName}记录
+// 根据主键更新$${entityName}记录
 func (this *${entityMongoRepoName}) Update${entityName}ByID(id , values interface{}) (updateResult *DB.UpdateResult,err error) {
 	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).UpdateOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, values)
 	if err != nil {
@@ -164,7 +164,7 @@ func (this *${entityMongoRepoName}) Update${entityName}ByID(id , values interfac
 
 }
 
-//删除${entityName}记录
+// 删除${entityName}记录
 func (this *${entityMongoRepoName}) Delete${entityName}(selector interface{}) (deleteResult *DB.DeleteResult,err error) {
 	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteMany(TC.TimeoutCtx.GetMongoOperate(0), selector)
 	if err != nil {
@@ -176,7 +176,7 @@ func (this *${entityMongoRepoName}) Delete${entityName}(selector interface{}) (d
 
 }
 
-//根据主键删除${entityName}记录
+// 根据主键删除${entityName}记录
 func (this *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) (deleteResult *DB.DeleteResult,err error) {
 	res, err := this.MongoClient.GetClient().Database(this.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id})
 	if err != nil {
@@ -188,7 +188,7 @@ func (this *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) (del
 
 }
 
-//插入${entityName}记录
+// 插入${entityName}记录
 func (this *${entityMongoRepoName}) Insert${entityName}(entities ...*SELFENTITY.${entityName}) (insertManyResult *DB.InsertManyResult,err error) {
 	entitiesInterface := []interface{}{}
 	for _, entity := range entities {
@@ -203,7 +203,7 @@ func (this *${entityMongoRepoName}) Insert${entityName}(entities ...*SELFENTITY.
 	}, nil
 }
 
-//关闭repo
+// 关闭repo
 func (this *${entityMongoRepoName}) Close() (err error){
 	return nil
 }
