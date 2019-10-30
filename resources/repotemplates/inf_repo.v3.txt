@@ -13,6 +13,10 @@ type ${entityRepoInterfaceName} interface {
 	// 通过主键查询一条${entityName}记录
 	Get${entityName}ByID(id interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error)
 
+
+    // 通过主键查询多条${entityName}记录
+	Get${entityName}ByIDs(ids []interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error)
+
 	// 查询${entityName}指定字段
 	Query${entityName}Distinct(query interface{}, field string) (fields []interface{},err error)
 
@@ -33,6 +37,9 @@ type ${entityRepoInterfaceName} interface {
 
 	// 根据主键删除${entityName}记录
 	Delete${entityName}ByID(id interface{}) (deleteResult *DB.DeleteResult,err error)
+
+	// 根据主键删除多条${entityName}记录
+	Delete${entityName}ByIDs(ids []interface{}) (deleteResult *DB.DeleteResult,err error)
 
 	// 插入${entityName}记录
 	Insert${entityName}(entities ...*SELFENTITY.${entityName}) (insertManyResult *DB.InsertManyResult,err error)

@@ -53,7 +53,40 @@ func (r *${entityMongoRepoName}) Get${entityName}ByID(id interface{}, options ..
 	}
 	return entity, nil
 }
-
+// 通过主键查询多条${entityName}记录
+func (r *${entityMongoRepoName}) Get${entityName}ByIDs(ids []interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entities = []*SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOptions{}
+    if opts.Select != nil {
+        ops = append(ops, mgooptions.Find().SetProjection(opts.Select))
+    }
+	cursor,err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": map[string]interface{}{"$in":ids}}, ops...)
+	if err != nil {
+        return nil, err
+    }
+    err = cursor.Err()
+    if err != nil {
+        return nil, err
+    }
+    defer func(){
+        err=cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
+        if err!=nil{
+            r.Logger.Errorf("Get${entityName}ByIDs : cursor.Close err , err is : %v !",err.Error())
+        }
+    }()
+    for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
+        entity := SELFENTITY.${entityName}{}
+        if err:=cursor.Decode(&entity);err!=nil{
+            r.Logger.Errorf("Get${entityName}ByIDs : cursor.Decode err , err is : %v !",err.Error())
+        }
+        entities = append(entities, &entity)
+    }
+	return entities, nil
+}
 // 查询${entityName}指定字段
 func (r *${entityMongoRepoName}) Query${entityName}Distinct(query interface{}, field string) (fields []interface{},err error) {
 	result, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).Distinct(TC.TimeoutCtx.GetMongoOperate(0), field, query)
@@ -187,7 +220,17 @@ func (r *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) (delete
 	}, nil
 
 }
+// 根据主键删除多条${entityName}记录
+func (r *${entityMongoRepoName}) Delete${entityName}ByIDs(ids []interface{}) (deleteResult *DB.DeleteResult,err error) {
+	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteMany(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": map[string]interface{}{"$in":ids}})
+	if err != nil {
+		return nil, err
+	}
+	return &DB.DeleteResult{
+		DeletedCount: res.DeletedCount,
+	}, nil
 
+}
 // 插入${entityName}记录
 func (r *${entityMongoRepoName}) Insert${entityName}(entities ...*SELFENTITY.${entityName}) (insertManyResult *DB.InsertManyResult,err error) {
 	entitiesInterface := []interface{}{}
