@@ -54,7 +54,7 @@ func (r *${entityMongoRepoName}) Get${entityName}ByID(id interface{}, options ..
 	return entity, nil
 }
 // 通过主键查询多条${entityName}记录
-func (r *${entityMongoRepoName}) Get${entityName}ByIDs(ids []interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error) {
+func (r *${entityMongoRepoName}) Get${entityName}ByIDs(ids interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error) {
 	opts := &DB.DBOperationOptions{}
 	for _, o := range options {
 		o(opts)
@@ -221,7 +221,7 @@ func (r *${entityMongoRepoName}) Delete${entityName}ByID(id interface{}) (delete
 
 }
 // 根据主键删除多条${entityName}记录
-func (r *${entityMongoRepoName}) Delete${entityName}ByIDs(ids []interface{}) (deleteResult *DB.DeleteResult,err error) {
+func (r *${entityMongoRepoName}) Delete${entityName}ByIDs(ids interface{}) (deleteResult *DB.DeleteResult,err error) {
 	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteMany(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": map[string]interface{}{"$in":ids}})
 	if err != nil {
 		return nil, err
