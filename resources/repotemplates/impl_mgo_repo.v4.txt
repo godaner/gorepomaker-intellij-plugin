@@ -1,0 +1,259 @@
+package mongo
+
+import (
+	mgooptions "go.mongodb.org/mongo-driver/mongo/options"
+	DB "han-networks.com/common/db"
+	TC "han-networks.com/common/timeoutctx"
+	SELFENTITY "han-networks.com/xxxx/entity"
+	"go.mongodb.org/mongo-driver/x/bsonx"
+	"han-networks.com/common/hanlog"
+	"golang.org/x/net/context"
+)
+
+// ${entityMongoRepoName}
+
+// 持久层mongo实现
+type ${entityMongoRepoName} struct {
+	MongoClient *DB.MongoClient `inject:"mongoclient"`
+	MongoDBName string          `inject:"mongodbname"`
+	Logger hanlog.Hanlog          `inject:"logger"`
+}
+
+// 查询一条${entityName}记录
+func (r *${entityMongoRepoName}) Query${entityName}One(ctx context.Context,query interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entity = &SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOneOptions{}
+	if opts.Select != nil {
+		ops = append(ops, mgooptions.FindOne().SetProjection(opts.Select))
+	}
+	err = r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), query, ops...).Decode(entity)
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
+
+// 通过主键查询一条${entityName}记录
+func (r *${entityMongoRepoName}) Get${entityName}ByID(ctx context.Context,id interface{}, options ...DB.DBOperationOption) (entity *SELFENTITY.${entityName},err error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entity = &SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOneOptions{}
+	if opts.Select != nil {
+		ops = append(ops, mgooptions.FindOne().SetProjection(opts.Select))
+	}
+	err = r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).FindOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, ops...).Decode(entity)
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
+// 通过主键查询多条${entityName}记录
+func (r *${entityMongoRepoName}) Get${entityName}ByIDs(ctx context.Context,ids interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entities = []*SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOptions{}
+    if opts.Select != nil {
+        ops = append(ops, mgooptions.Find().SetProjection(opts.Select))
+    }
+	if opts.Start >= 1 {
+		ops = append(ops, mgooptions.Find().SetSkip(opts.Start))
+	}
+	cursor,err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": map[string]interface{}{"$in":ids}}, ops...)
+	if err != nil {
+        return nil, err
+    }
+    err = cursor.Err()
+    if err != nil {
+        return nil, err
+    }
+    defer func(){
+        err=cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
+        if err!=nil{
+            r.Logger.Errorf("Get${entityName}ByIDs : cursor.Close err , err is : %v !",ctx,err.Error())
+        }
+    }()
+    for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
+        entity := SELFENTITY.${entityName}{}
+        if err:=cursor.Decode(&entity);err!=nil{
+            r.Logger.Errorf("Get${entityName}ByIDs : cursor.Decode err , err is : %v !",ctx,err.Error())
+        }
+        entities = append(entities, &entity)
+    }
+	return entities, nil
+}
+// 查询${entityName}指定字段
+func (r *${entityMongoRepoName}) Query${entityName}Distinct(ctx context.Context,query interface{}, field string) (fields []interface{},err error) {
+	result, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).Distinct(TC.TimeoutCtx.GetMongoOperate(0), field, query)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// 查询${entityName}记录
+func (r *${entityMongoRepoName}) Query${entityName}Many(ctx context.Context,query interface{}, options ...DB.DBOperationOption) (entities []*SELFENTITY.${entityName},err error) {
+	opts := &DB.DBOperationOptions{}
+	for _, o := range options {
+		o(opts)
+	}
+	entities = []*SELFENTITY.${entityName}{}
+	ops := []*mgooptions.FindOptions{}
+	if opts.Select != nil {
+		ops = append(ops, mgooptions.Find().SetProjection(opts.Select))
+	}
+	if opts.Sorts != nil {
+		ops = append(ops, mgooptions.Find().SetSort(opts.Sorts))
+	}
+    if opts.Sortss != nil {
+        ss := bsonx.Doc{}
+        for _, s := range opts.Sortss {
+            n := int32(1)
+            if len(s)>=1{
+                switch s[0] {
+                case '+':
+                    s = s[1:]
+                case '-':
+                    n = int32(-1)
+                    s = s[1:]
+                }
+            }
+			if s==""{
+				r.Logger.Error(ctx,"Query${entityName}Many : get sort field is nil !")
+			}
+            ss = append(ss, bsonx.Elem{Key:s, Value:bsonx.Int32(n)})
+        }
+        ops = append(ops, mgooptions.Find().SetSort(ss))
+    }
+	if opts.Limit >= 1 {
+		ops = append(ops, mgooptions.Find().SetLimit(opts.Limit))
+	}
+	if opts.Start >= 1 {
+		ops = append(ops, mgooptions.Find().SetSkip(opts.Start))
+	}
+	cursor, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).Find(TC.TimeoutCtx.GetMongoOperate(0), query, ops...)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.Err()
+	if err != nil {
+		return nil, err
+	}
+	defer func(){
+	    err=cursor.Close(TC.TimeoutCtx.GetMongoOperate(0))
+	    if err!=nil{
+	        r.Logger.Errorf("Query${entityName}Many : cursor.Close err , err is : %v !",ctx,err.Error())
+	    }
+	}()
+	for cursor.Next(TC.TimeoutCtx.GetMongoOperate(0)) {
+		entity := SELFENTITY.${entityName}{}
+		if err:=cursor.Decode(&entity);err!=nil{
+		    r.Logger.Errorf("Query${entityName}Many : cursor.Decode err , err is : %v !",ctx,err.Error())
+		}
+		entities = append(entities, &entity)
+	}
+	return entities, nil
+
+}
+
+// 查询${entityName}数量
+func (r *${entityMongoRepoName}) Query${entityName}Count(ctx context.Context,query interface{}) (count int64,err error) {
+	count, err = r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).CountDocuments(TC.TimeoutCtx.GetMongoOperate(0), query)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// 更新${entityName}记录
+func (r *${entityMongoRepoName}) Update${entityName}(ctx context.Context,selector, values interface{}) (updateResult *DB.UpdateResult,err error) {
+	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).UpdateMany(TC.TimeoutCtx.GetMongoOperate(0), selector, values)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.UpdateResult{
+		MatchedCount:  res.MatchedCount,
+		ModifiedCount: res.ModifiedCount,
+		UpsertedCount: res.UpsertedCount,
+		UpsertedID:    res.UpsertedID,
+	}, nil
+
+}
+
+// 根据主键更新$${entityName}记录
+func (r *${entityMongoRepoName}) Update${entityName}ByID(ctx context.Context,id , values interface{}) (updateResult *DB.UpdateResult,err error) {
+	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).UpdateOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id}, values)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.UpdateResult{
+		MatchedCount:  res.MatchedCount,
+		ModifiedCount: res.ModifiedCount,
+		UpsertedCount: res.UpsertedCount,
+		UpsertedID:    res.UpsertedID,
+	}, nil
+
+}
+
+// 删除${entityName}记录
+func (r *${entityMongoRepoName}) Delete${entityName}(ctx context.Context,selector interface{}) (deleteResult *DB.DeleteResult,err error) {
+	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteMany(TC.TimeoutCtx.GetMongoOperate(0), selector)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.DeleteResult{
+		DeletedCount: res.DeletedCount,
+	}, nil
+
+}
+
+// 根据主键删除${entityName}记录
+func (r *${entityMongoRepoName}) Delete${entityName}ByID(ctx context.Context,id interface{}) (deleteResult *DB.DeleteResult,err error) {
+	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteOne(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": id})
+	if err != nil {
+		return nil, err
+	}
+	return &DB.DeleteResult{
+		DeletedCount: res.DeletedCount,
+	}, nil
+
+}
+// 根据主键删除多条${entityName}记录
+func (r *${entityMongoRepoName}) Delete${entityName}ByIDs(ctx context.Context,ids interface{}) (deleteResult *DB.DeleteResult,err error) {
+	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).DeleteMany(TC.TimeoutCtx.GetMongoOperate(0), map[string]interface{}{"_id": map[string]interface{}{"$in":ids}})
+	if err != nil {
+		return nil, err
+	}
+	return &DB.DeleteResult{
+		DeletedCount: res.DeletedCount,
+	}, nil
+
+}
+// 插入${entityName}记录
+func (r *${entityMongoRepoName}) Insert${entityName}(ctx context.Context,entities ...*SELFENTITY.${entityName}) (insertManyResult *DB.InsertManyResult,err error) {
+	entitiesInterface := []interface{}{}
+	for _, entity := range entities {
+		entitiesInterface = append(entitiesInterface, entity)
+	}
+	res, err := r.MongoClient.GetClient().Database(r.MongoDBName).Collection(SELFENTITY.${entityName}Col).InsertMany(TC.TimeoutCtx.GetMongoOperate(0), entitiesInterface)
+	if err != nil {
+		return nil, err
+	}
+	return &DB.InsertManyResult{
+		InsertedIDs: res.InsertedIDs,
+	}, nil
+}
+
+// 关闭repo
+func (r *${entityMongoRepoName}) Close(ctx context.Context) (err error){
+	return nil
+}
